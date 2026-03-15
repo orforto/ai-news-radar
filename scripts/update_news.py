@@ -1709,6 +1709,57 @@ def load_archive(path: Path) -> dict[str, dict[str, Any]]:
     return out
 
 
+def json_size_bytes(payload: dict[str, Any]) -> int:
+    return len(json.dumps(payload, ensure_ascii=False, indent=2).encode("utf-8"))
+
+
+def trim_archive_items_to_size(
+    items: list[dict[str, Any]],
+    *,
+    generated_at: str,
+    max_bytes: int,
+) -> tuple[list[dict[str, Any]], int, int]:
+    if max_bytes <= 0:
+        payload = {
+            "generated_at": generated_at,
+            "total_items": len(items),
+            "items": items,
+        }
+        return items, 0, json_size_bytes(payload)
+
+    full_payload = {
+        "generated_at": generated_at,
+        "total_items": len(items),
+        "items": items,
+    }
+    full_size = json_size_bytes(full_payload)
+    if full_size <= max_bytes:
+        return items, 0, full_size
+
+    lo, hi = 0, len(items)
+    best = 0
+    best_size = json_size_bytes({"generated_at": generated_at, "total_items": 0, "items": []})
+
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        candidate = {
+            "generated_at": generated_at,
+            "total_items": mid,
+            "items": items[:mid],
+        }
+        size = json_size_bytes(candidate)
+        if size <= max_bytes:
+            best = mid
+            best_size = size
+            lo = mid + 1
+        else:
+            hi = mid - 1
+
+    kept = items[:best]
+    dropped = max(0, len(items) - len(kept))
+    return kept, dropped, best_size
+
+
 def event_time(record: dict[str, Any]) -> datetime | None:
     # RSS sources must rely on the source's publish time only.
     # first_seen_at is fetch time and would falsely mark historical items as "24h".
@@ -2028,6 +2079,12 @@ def main() -> int:
     parser.add_argument("--output-dir", default="data", help="Directory for output JSON files")
     parser.add_argument("--window-hours", type=int, default=24, help="24h window size")
     parser.add_argument("--archive-days", type=int, default=45, help="Keep archive for N days")
+    parser.add_argument(
+        "--archive-max-bytes",
+        type=int,
+        default=95_000_000,
+        help="Cap archive.json size in bytes (0 disables size cap)",
+    )
     parser.add_argument("--translate-max-new", type=int, default=80, help="Max new EN->ZH title translations per run")
     parser.add_argument("--rss-opml", default="", help="Optional OPML file path to include RSS sources")
     parser.add_argument("--rss-max-feeds", type=int, default=0, help="Optional max OPML RSS feeds to fetch (0 means all)")
@@ -2126,6 +2183,24 @@ def main() -> int:
             pruned[item_id] = record
     archive = pruned
 
+    generated_at = iso(now)
+    archive_items_sorted = sorted(
+        archive.values(),
+        key=lambda x: parse_iso(x.get("last_seen_at")) or datetime.min.replace(tzinfo=UTC),
+        reverse=True,
+    )
+    archive_items_sorted, dropped_items, archive_size_bytes = trim_archive_items_to_size(
+        archive_items_sorted,
+        generated_at=generated_at,
+        max_bytes=max(0, int(args.archive_max_bytes)),
+    )
+    archive = {str(item.get("id")): item for item in archive_items_sorted if item.get("id")}
+    if dropped_items > 0:
+        print(
+            f"Archive compacted: dropped {dropped_items} oldest items "
+            f"to fit {args.archive_max_bytes} bytes (current {archive_size_bytes} bytes)"
+        )
+
     # 24h view
     window_start = now - timedelta(hours=args.window_hours)
     latest_items_all: list[dict[str, Any]] = []
@@ -2199,7 +2274,7 @@ def main() -> int:
         }
 
     latest_payload = {
-        "generated_at": iso(now),
+        "generated_at": generated_at,
         "window_hours": args.window_hours,
         "total_items": len(latest_items_ai_dedup),
         "total_items_ai_raw": len(latest_items),
@@ -2217,13 +2292,9 @@ def main() -> int:
     }
 
     archive_payload = {
-        "generated_at": iso(now),
+        "generated_at": generated_at,
         "total_items": len(archive),
-        "items": sorted(
-            archive.values(),
-            key=lambda x: parse_iso(x.get("last_seen_at")) or datetime.min.replace(tzinfo=UTC),
-            reverse=True,
-        ),
+        "items": archive_items_sorted,
     }
 
     status_payload = {

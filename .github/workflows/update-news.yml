@@ -5,6 +5,10 @@ on:
   schedule:
     - cron: "*/30 * * * *"
 
+concurrency:
+  group: update-news-${{ github.ref }}
+  cancel-in-progress: false
+
 permissions:
   contents: write
 
@@ -40,19 +44,33 @@ jobs:
       - name: Update data
         run: |
           if [ -f feeds/follow.opml ]; then
-            python scripts/update_news.py --output-dir data --window-hours 24 --rss-opml feeds/follow.opml
+            python scripts/update_news.py --output-dir data --window-hours 24 --archive-max-bytes 95000000 --rss-opml feeds/follow.opml
           else
-            python scripts/update_news.py --output-dir data --window-hours 24
+            python scripts/update_news.py --output-dir data --window-hours 24 --archive-max-bytes 95000000
           fi
 
       - name: Commit and push changes
         run: |
-          if git diff --quiet; then
-            echo "No changes to commit"
+          git add data/latest-24h.json data/archive.json data/source-status.json data/waytoagi-7d.json data/title-zh-cache.json
+          if git diff --cached --quiet; then
+            echo "No staged changes to commit"
             exit 0
           fi
+
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/latest-24h.json data/archive.json data/source-status.json data/waytoagi-7d.json data/title-zh-cache.json
           git commit -m "chore: update ai news snapshot"
-          git push
+
+          BRANCH="${GITHUB_REF_NAME:-master}"
+          for i in 1 2 3; do
+            git pull --rebase origin "$BRANCH" || true
+            if git push origin "HEAD:$BRANCH"; then
+              echo "Push succeeded"
+              exit 0
+            fi
+            echo "Push attempt $i failed, retrying..."
+            sleep $((i * 3))
+          done
+
+          echo "::error::Push failed after retries. Check repository Actions workflow permissions (Read and write) and branch settings."
+          exit 1
