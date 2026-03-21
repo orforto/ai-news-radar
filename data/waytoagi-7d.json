@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-03-21T13:05:10.410657Z",
+  "generated_at": "2026-03-21T13:59:33.326209Z",
   "timezone": "Asia/Shanghai",
   "root_url": "https://waytoagi.feishu.cn/wiki/QPe5w5g7UisbEkkow8XcDmOpn8e?fromScene=spaceOverview",
   "history_url": "https://waytoagi.feishu.cn/wiki/FjiOwWp2giA7hRk6jjfcPioCnAc",
   "window_days": 7,
   "latest_date": "2026-03-21",
-  "count_today": 4,
+  "count_today": 5,
   "updates_today": [
     {
       "date": "2026-03-21",
@@ -19,6 +19,11 @@
     },
     {
       "date": "2026-03-21",
+      "title": "越来越多的岗位遭受到AI的冲击，这篇文章，作者想和所有画师、艺术生、创作者认真聊聊这件事。不是为了安慰你，而是想陪你把这件事真正想清楚。让你在时代变革中找准定位，化冲击为进阶动力。",
+      "url": "https://waytoagi.feishu.cn/wiki/QPe5w5g7UisbEkkow8XcDmOpn8e?fromScene=spaceOverview"
+    },
+    {
+      "date": "2026-03-21",
       "title": "在 OpenClaw 的使用者里，有一条隐形的分界线。一边的人，每次跟 Agent 说话都像重新 onboarding：得再讲一遍背景、偏好和上下文。另一边的人，Agent 已经知道自己是谁、该怎么说话、用户讨厌什么，也记得上次积累下来的东西。这条分界线，叫 workspace 。更具体一点，就是默认情况下主 Agent 用的 ~/.openclaw/workspace/ 这一套文件(sub-agent也适用)。下面这篇文章，就把这套文件逐个拆开，说清楚它们各自管什么，以及最容易踩的坑是什么。",
       "url": "https://waytoagi.feishu.cn/wiki/QPe5w5g7UisbEkkow8XcDmOpn8e?fromScene=spaceOverview"
     },
@@ -28,7 +33,7 @@
       "url": "https://waytoagi.feishu.cn/wiki/QPe5w5g7UisbEkkow8XcDmOpn8e?fromScene=spaceOverview"
     }
   ],
-  "count_7d": 37,
+  "count_7d": 38,
   "updates_7d": [
     {
       "date": "2026-03-21",
@@ -38,6 +43,11 @@
     {
       "date": "2026-03-21",
       "title": "这位 OpenAI 联合创始成员、前 Tesla AI 总监，现在是独立 AI 研究者和 Eureka Labs 创始人。他最近做客 Sarah Guo 的 No Priors 播客，聊了编码 Agent 如何改变工程师的日常、AutoResearch 与递归自我改进、AI 的“参差不齐”、开源与闭源的力量对比、物理世界 vs 数字世界的节奏差异，以及 Agent 时代教育的未来。",
+      "url": "https://waytoagi.feishu.cn/wiki/QPe5w5g7UisbEkkow8XcDmOpn8e?fromScene=spaceOverview"
+    },
+    {
+      "date": "2026-03-21",
+      "title": "越来越多的岗位遭受到AI的冲击，这篇文章，作者想和所有画师、艺术生、创作者认真聊聊这件事。不是为了安慰你，而是想陪你把这件事真正想清楚。让你在时代变革中找准定位，化冲击为进阶动力。",
       "url": "https://waytoagi.feishu.cn/wiki/QPe5w5g7UisbEkkow8XcDmOpn8e?fromScene=spaceOverview"
     },
     {
