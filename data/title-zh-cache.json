@@ -5851,5 +5851,11 @@
   "Ask ChatGPT to pick a number from 1-10000, it generally selects from 7200-7500": "让 ChatGPT 从 1-10000 中选择一个数字，一般从 7200-7500 中选择",
   "Google adds 24-hour wait and mandatory reboot to Android sideloading flow": "Google 在 Android 侧载流程中添加了 24 小时等待和强制重启",
   "Windows 11's Start menu was built using React – now switching to native WinUI": "Windows 11 的开始菜单是使用 React 构建的 – 现在切换到本机 WinUI",
-  "A with-based effect notation": "基于 with 的效果符号"
+  "A with-based effect notation": "基于 with 的效果符号",
+  "Claude Cowork Projects": "克劳德合作项目",
+  "Everest AI": "珠穆朗玛峰人工智能",
+  "Replit Agent 4": "复制代理 4",
+  "Design Agent by Lokuma": "Lokuma 设计代理",
+  "Space Needle in Seattle over clouds looks like the cloud city from Star Wars": "云层之上的西雅图太空针塔看起来就像星球大战中的云城",
+  "Ubuntu 26.04 Ends 46 Years of Silent sudo Passwords": "Ubuntu 26.04 结束 46 年无声 sudo 密码"
 }
